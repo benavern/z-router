@@ -65,7 +65,23 @@
         return public;
       },
       check: function(f){
-        // checks the current fragment and calls render method ifit has changed
+        // checks the current fragment and calls render method if it has changed
+
+
+        //mais comment il fait ???
+        // https://raw.githubusercontent.com/krasimir/navigo/master/lib/navigo.js
+
+
+        var fragment = f || public.get.fragment();
+        for(var i = 0; i < private.routes.length; i++) {
+            var match = fragment.match(private.routes[i].url);
+            if(match) {
+                match.shift();
+                private.routes[i].callback.apply({}, match);
+                return public;
+            }
+        }
+        return public;
       },
       listen: function() {
         // calls every 50ms the check methode and compares the current fragment with the one that has been stored at last route change
@@ -82,8 +98,8 @@
       },
       render : function(route) {
         // rendrers the template (downloads it before if the route has a tempalte url & is not yet in the cache) + loader
-        // should pass in template function only if it has options
-        // should only pass in template function when in cache but url has changed
+        // should pass in tp function only if it has options
+        // should only pass in tp function when in cache but url has changed
         private.fetch(route.name, route.url);
       },
       navigate : function(path) {
@@ -91,7 +107,7 @@
         window.location.href = window.location.href.replace(/#(.*)$/, '') + '#' + path;
         return public;
       },
-      template : function (html, options) {
+      tp : function (html, options) {
         //pass the html and options in and this will return the html populated with the options data
         // http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
         var re = /<%([^%>]+)?%>/g,
@@ -101,7 +117,7 @@
             match;
         var add = function(line, js) {
             js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
-                (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+                (code += line !== '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
             return add;
         };
         while(match = re.exec(html)) {
@@ -119,3 +135,26 @@
      */
     return public;
   })();
+
+
+//  if(!!route.name && !!route.url && !!route.callback && (!!route.template || !!route.templateUrl)) private.routes.push(route);
+
+
+Zrouter.set.route({
+  name : 'Test1',
+  url  : /test1/,
+  template : '<p>This is an inline template</p>',
+  callback : function(){
+    console.log("111", arguments);
+  }
+})
+.set.route({
+  name  : 'Test2',
+  url : /test2\/(.*)/,
+  templateUrl : 'partials/test2.html',
+  callback : function() {
+    console.log("222", arguments);
+  }
+})
+.check("/")
+.listen()
