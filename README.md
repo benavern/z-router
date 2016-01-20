@@ -6,9 +6,19 @@
 
 ## How it works
 
+It watches the hash part of the current url and displayes different things depending on the hash path
+
+You can pass parameters inside the hash path and use it in the template.
+
 ---
 
 ## HowTo
+
+### to display the demo
+
+* `npm i`       Will install all the dependances
+* `gulp build`  Builds the dist directory (usefull only for the first time)
+* `gulp`        Watches the changes and browser-sync
 
 ---
 

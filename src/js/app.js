@@ -10,8 +10,11 @@
       el : '#z-router-view',
       interval: null,
       fetch : function(route, options) {
-        // fetches the template if needed & compiles it then displayes it
-        if(!!route.templateUrl) {
+        // fetches the template if needed & compiles it then displayes it (to simulate caching, fetched data is inserted in the template )
+        if (!!route.template){
+          public.render(public.tp(route.template, options));
+        }
+        else if(!!route.templateUrl) {
           var xhttp = new XMLHttpRequest();
           xhttp.onreadystatechange = function() {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -20,9 +23,6 @@
           };
           xhttp.open("GET", route.templateUrl, true);
           xhttp.send();
-        }
-        else {
-          public.render(public.tp(route.template, options));
         }
       }
     };
@@ -161,4 +161,5 @@ Zrouter
   .set.route(function(){
     console.log("coucou");
   })
+
   .listen()
