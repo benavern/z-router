@@ -11,12 +11,13 @@ var jshint       = require('gulp-jshint');
 var uglify       = require('gulp-uglify');
 var minifycss    = require('gulp-minify-css');
 var sass         = require('gulp-sass');
+var jade         = require('gulp-jade');
 var browserSync  = require('browser-sync');
 
 gulp.task('browser-sync', function() {
   browserSync({
     server: {
-      baseDir: "./"
+      baseDir: "./dist"
     }
   });
 });
@@ -26,14 +27,14 @@ gulp.task('bs-reload', function () {
 });
 
 
-gulp.task('styles', function(){
-  gulp.src(['src/sass/**/*.scss'])
+gulp.task('styles', function() {
+  gulp.src(['src/sass/**/*.sass'])
     .pipe(plumber({
       errorHandler: function (error) {
         console.log(error.message);
         this.emit('end');
     }}))
-    .pipe(sass())
+    .pipe(sass({indentedSyntax: true}))
     .pipe(autoprefixer('last 2 versions'))
     .pipe(gulp.dest('dist/css/'))
     .pipe(rename({suffix: '.min'}))
@@ -42,7 +43,7 @@ gulp.task('styles', function(){
     .pipe(browserSync.reload({stream:true}))
 });
 
-gulp.task('scripts', function(){
+gulp.task('scripts', function() {
   return gulp.src('src/js/**/*.js')
     .pipe(plumber({
       errorHandler: function (error) {
@@ -59,8 +60,23 @@ gulp.task('scripts', function(){
     .pipe(browserSync.reload({stream:true}))
 });
 
+gulp.task('html', function() {
+  gulp.src('src/**/*.jade')
+    .pipe(plumber({
+      errorHandler: function (error) {
+        console.log(error.message);
+        this.emit('end');
+    }}))
+    .pipe(jade())
+    .pipe(gulp.dest('dist/'))
+    .pipe(browserSync.reload({stream:true}))
+});
+
+gulp.task('build', ['html', 'styles', 'scripts']);
+
 gulp.task('default', ['browser-sync'], function(){
   gulp.watch("src/sass/**/*.scss", ['styles']);
   gulp.watch("src/js/**/*.js", ['scripts']);
-  gulp.watch("*.html", ['bs-reload']);
+  gulp.watch("src/**/*.html", ['bs-reload']);
+  gulp.watch("src/**/*.jade", ['html']);
 });
