@@ -4,13 +4,6 @@
 
 ---
 
-## Requirements
-
-* [Zepto](http://zeptojs.com/) or [jQuery](https://jquery.com/)
-* Some time to understand how it works...
-
----
-
 ## How it works
 
 ---

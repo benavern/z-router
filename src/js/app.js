@@ -8,21 +8,23 @@
       routes : [],
       root : '/',
       el : '#z-router-view',
+      interval: null,
       fetch : function(route, options) {
-        // fetches the template if needed
-        // compiles it and displayes it
+        // fetches the template if needed & compiles it then displayes it
         if(!!route.templateUrl) {
-          $.get(route.templateUrl, function(data) {
-            public.render(public.tp(data, options));
-          });
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+              public.render(public.tp(xhttp.responseText, options));
+            }
+          };
+          xhttp.open("GET", route.templateUrl, true);
+          xhttp.send();
         }
         else {
           public.render(public.tp(route.template, options));
         }
-
-      },
-      current : null,
-      interval: null
+      }
     };
 
     /**
@@ -64,11 +66,9 @@
       },
       //other functions
       remove: function(routeName) {
-        var routeInRoutes = private.routes.map(function(a) { return a.name; }).indexOf(routeName),
-            routeInCache = private.cache.map(function(b) { return b.name; }).indexOf(routeName);
+        var routeInRoutes = private.routes.map(function(a) { return a.name; }).indexOf(routeName)
         if(routeInRoutes != -1) private.routes.splice(routeInRoutes, 1);
         else console.log('The route named "'+routeName+'" doesn\'t exist');
-        if(routeInCache != -1) private.cache.splice(routeInCache, 1);
         return public;
       },
       check: function(f){
@@ -78,7 +78,6 @@
             var match = fragment.match(private.routes[i].url);
             if(match) {
                 match.shift();
-                // private.routes[i].callback.apply({}, match);
                 var route = private.routes[i];
                 private.fetch(route, match);
                 return public;
@@ -88,11 +87,10 @@
       },
       listen: function() {
         // calls every 50ms the check methode and compares the current fragment with the one that has been stored at last route change
-        var current = null;//public.get.fragment();
+        var current = null; // to be sure it will be fired onload
         var fn = function() {
             if(current !== public.get.fragment()) {
                 current = public.get.fragment();
-                console.log("new page = ", current);
                 public.check(current);
             }
         };
@@ -104,7 +102,7 @@
         // rendrers the template (downloads it before if the route has a template url & is not yet in the cache) + loader
         // should pass in tp function only if it has options
         // should only pass in tp function when in cache but url has changed
-        $(private.el).html(data);
+        document.querySelector(private.el).innerHTML = data;
       },
       navigate : function(path) {
         path = path ? path : '';
