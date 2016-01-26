@@ -1,21 +1,22 @@
 doctype html
 html(lang="en")
-head
-  meta(charset="UTF-8")
-  title Z-Router
-body
-  
-  h1 Hello, World!
-  ul
-    li
-      a(href="#/") 0
-    li
-      a(href="#/test1") 1
-    li
-      a(href="#/test2/coucou") 2
-  
-  div#z-router-view 
-  
-  script(src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js")
-  script(src="js/main.js")
+  head
+    meta(charset="UTF-8")
+    title Z-Router
+
+  body
+    h1 Hello, World!
+    ul
+      li
+        a(href="#/") /
+      li
+        a(href="#/home") /home
+      li
+        a(href="#/home/2") /home/2
+      li
+        a(href="#/test2/yolo") /test2/{yolo}
+
+    div#z-router-view
+
+    script(src="js/main.js")
   

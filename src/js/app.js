@@ -1,165 +1,245 @@
+/**
+ * ZRouter class
+ * by benjamin Caradeuc
+ * http://labo.caradeuc.info/z-router
+ */
+var ZRouter = (function(document, window, undefined) {
 
-  var Zrouter = (function() {
+  // Private arguments & methods
+  var priv = {
+    // the routes array
+    routes    : [],
+    // the default route url if nothing specified
+    root      : '/',
+    // the view (css) selector
+    el        : '#z-router-view',
+    //the loader html template
+    loaderTpl : "<p>Loading...</p>",
 
     /**
-     * Private arguments & methods
+     * Get the template (ajax or inline)
+     * @param route
      */
-    var private = {
-      routes : [],
-      root : '/',
-      el : '#z-router-view',
-      interval: null,
-      fetch : function(route, options) {
-        // fetches the template if needed & compiles it then displayes it (to simulate caching, fetched data is inserted in the template )
-        if (!!route.template){
-          public.render(public.tp(route.template, options));
-        }
-        else if(!!route.templateUrl) {
-          var xhttp = new XMLHttpRequest();
-          xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
-              public.render(public.tp(xhttp.responseText, options));
+    getTemplate: function (route) {
+      // fetches the template if needed & compiles it then returns it (to simulate caching, fetched data is inserted in the template of the selected route )
+      if (!!route.template) {
+        pub.render(pub.tp(route.template, route.options));
+        if(typeof route.callback == "function") route.callback(route.options);
+      }
+      else if (!!route.templateUrl) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            route.template = xhttp.responseText;
+            pub.render(pub.tp(xhttp.responseText, route.options));
+            if(typeof route.callback == "function") route.callback(route.options);
+          }
+          else {
+            pub.render("<h1>Error " + xhttp.status + "</h1>");
+          }
+        };
+        xhttp.open("GET", route.templateUrl, true);
+        xhttp.send();
+      }
+    }
+  };
+
+  // Public arguments & methods
+  var pub = {
+
+    /**
+     * Get the hash part of the actual url (prettified)
+     * @returns {string}
+     */
+    getFragment: function() {
+      if(window.location.hash === '') pub.navigate(priv.root); // no infinite loop when no or empty hash provided
+      var match = window.location.href.match(/#(.*)$/),
+          fragment = match ? match[1] : '';
+      return fragment.toString();//.replace(/\/$/, '').replace(/^\//, ''); // don't remove first & last slash or #/ wont work!
+    },
+
+
+    /**
+     * Sets the root route url (@default: "/")
+     * @param root (string)
+     * @returns pub (method chaining)
+     */
+    setRoot : function(root) {
+      priv.root = root;
+      return pub;
+    },
+
+    /**
+     * Changes the default loader template (@tip: put a gif img for example)
+     * @param tpl
+     * @returns pub (method chaining)
+     */
+    setLoaderTpl: function(tpl) {
+      priv.loaderTpl = tpl;
+      return pub;
+    },
+
+    /**
+     * Add a route in the list of routes
+     * if the this is a function, make it the default route !
+     * @param route (object)
+     * @returns pub (method chaining)
+     */
+    add : function(route) {
+      if(typeof route == "object") {
+        if(!!route.url && (!!route.template || !!route.templateUrl)) priv.routes.push(route);
+        else console.log("This route has a problem, it cant be added!", route);
+      }
+      else console.log("This route has a problem, it cant be added!", route);
+      return pub;
+    },
+
+    /**
+     * gets the route based on the fragment and calls the the method that will get the template
+     * @param f (fragment)
+     * @returns pub (method chaining)
+     */
+    check: function(f){
+      // checks the current fragment and calls render method
+      var fragment = f || pub.getFragment(),
+          argsVal,
+          argsNames,
+          params = {};
+
+      for(var x = 0; x < priv.routes.length; x++){
+        var currRoute = priv.routes[x];
+        var routeMatcher = new RegExp(currRoute.url.replace(/(:\w+)/g, '([\\w-]+)'));
+        argsVal = fragment.match(routeMatcher);
+        if(argsVal) {
+          argsVal.shift(); // to remove the first array element
+          argsNames = currRoute.url.match(/(:\w+)/g);
+          if(argsNames) {
+            for(var y = 0; y < argsNames.length; y++){
+              params[argsNames[y].slice(1)] = argsVal[y];
             }
-          };
-          xhttp.open("GET", route.templateUrl, true);
-          xhttp.send();
+          }
+          if(!currRoute.options) currRoute.options = {};
+          currRoute.options.params = params;
+          //pub.render(priv.loaderTpl);
+          priv.getTemplate(currRoute);
+          return pub;
         }
       }
-    };
+      pub.navigate(priv.root);
+      return pub;
+    },
 
     /**
-     * Private arguments & methods
+     * Listens the url changes and calls the check function when they occure
+     * @returns pub (method chaining)
      */
-    var public = {
-      // getters
-      get : {
-        fragment: function() {
-            var match = window.location.href.match(/#(.*)$/),
-                fragment = match ? match[1] : '';
-            return fragment.toString().replace(/\/$/, '').replace(/^\//, '');
-        },
-        routes : function() {
-          return JSON.stringify(private.routes);
-        },
-        route : function(f) {
-          var routeFound = private.routes.map(function(x) { return x.route; }).indexOf(f);
-          if (routeFound != -1) return private.routes[routeFound];
-          return null;
+    listen: function() {
+      // calls every 50ms the check methode and compares the current fragment with the one that has been stored at last route change
+      var currentFragment = null, // to be sure it will be fired onload
+          interval;
+      var fn = function() {
+        if(currentFragment !== pub.getFragment()) {
+          currentFragment = pub.getFragment();
+          pub.check(currentFragment);
         }
-      },
-      //setters
-      set : { //return public; (will allow methods chaining)
-        root : function(root) {
-          private.root = root;
-          return public;
-        },
-        route : function(route) {
-          if(typeof route == "object") {
-            if(!!route.name && !!route.url && !!route.callback && (!!route.template || !!route.templateUrl)) private.routes.push(route);
-            else console.log('The route named "'+route.name+'" can\'t be added');
-          }
-          else if(typeof route == "function") {
-            private.routes.push({name : "root", url: "", callback: route, template:"404"});
-          }
-          return public;
-        }
-      },
-      //other functions
-      remove: function(routeName) {
-        var routeInRoutes = private.routes.map(function(a) { return a.name; }).indexOf(routeName)
-        if(routeInRoutes != -1) private.routes.splice(routeInRoutes, 1);
-        else console.log('The route named "'+routeName+'" doesn\'t exist');
-        return public;
-      },
-      check: function(f){
-        // checks the current fragment and calls render method if it has changed
-        var fragment = f || public.get.fragment();
-        for(var i = 0; i < private.routes.length; i++) {
-            var match = fragment.match(private.routes[i].url);
-            if(match) {
-                match.shift();
-                var route = private.routes[i];
-                private.fetch(route, match);
-                return public;
-            }
-        }
-        return public;
-      },
-      listen: function() {
-        // calls every 50ms the check methode and compares the current fragment with the one that has been stored at last route change
-        var current = null; // to be sure it will be fired onload
-        var fn = function() {
-            if(current !== public.get.fragment()) {
-                current = public.get.fragment();
-                public.check(current);
-            }
-        };
-        clearInterval(private.interval);
-        private.interval = setInterval(fn, 50);
-        return public;
-      },
-      render : function(data) {
-        // rendrers the template (downloads it before if the route has a template url & is not yet in the cache) + loader
-        // should pass in tp function only if it has options
-        // should only pass in tp function when in cache but url has changed
-        document.querySelector(private.el).innerHTML = data;
-      },
-      navigate : function(path) {
-        path = path ? path : '';
-        window.location.href = window.location.href.replace(/#(.*)$/, '') + '#' + path;
-        return public;
-      },
-      tp : function (html, options) {
-        //pass the html and options in and this will return the html populated with the options data
-        // http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
-        var re = /<%([^%>]+)?%>/g,
-            reExp  = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
-            code   = 'var r=[];\n',
-            cursor = 0,
-            match;
-        var add = function(line, js) {
-            js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
-                (code += line !== '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
-            return add;
-        };
-        while(match = re.exec(html)) {
-            add(html.slice(cursor, match.index))(match[1], true);
-            cursor = match.index + match[0].length;
-        }
-        add(html.substr(cursor, html.length - cursor));
-        code += 'return r.join("");';
-        return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
+      };
+      clearInterval(interval);
+      interval = setInterval(fn, 50);
+      return pub;
+    },
+
+    /**
+     * Renders the template on the view
+     * @param data
+     * @returns pub (method chaining)
+     */
+    render : function(data) {
+      document.querySelector(priv.el).innerHTML = data;
+      return pub;
+    },
+
+    /**
+     * Force the url to change programatically
+     * @param path
+     * @returns pub (method chaining)
+     */
+    navigate : function(path) {
+      path = path ? path : '';
+      window.location.href = window.location.href.replace(/#(.*)$/, '#' + path);
+      return pub;
+    },
+
+    /**
+     * Populates the view with the options properties passed to it (for loops etc...)
+     * http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
+     * @param html
+     * @param options
+     * @returns {html}
+     */
+    tp : function (html, options) {
+      //pass the html and options in and this will return the html populated with the options data
+      // http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
+      var re = /<%([^%>]+)?%>/g,
+          reExp  = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
+          code   = 'var r=[];\n',
+          cursor = 0,
+          match;
+      var add = function(line, js) {
+        js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
+            (code += line !== '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+        return add;
+      };
+      while(match = re.exec(html)) {
+        add(html.slice(cursor, match.index))(match[1], true);
+        cursor = match.index + match[0].length;
       }
-    };
-
-    /**
-     * Expose only the public things
-     */
-    return public;
-  })();
-
-
-Zrouter
-  .set.route({
-    name : 'Test1',
-    url  : /test1/,
-    template : '<p>This is an inline template</p>',
-    callback : function(){
-      console.log("111", arguments);
+      add(html.substr(cursor, html.length - cursor));
+      code += 'return r.join("");';
+      return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
     }
-  })
+  };
 
-  .set.route({
-    name  : 'Test2',
-    url : /test2\/(.*)/,
-    templateUrl : 'partials/test2.html',
-    callback : function() {
-      console.log("222", arguments);
-    }
-  })
+  // expose the "pub" things and keep "priv" 's ones safe.
+  return pub;
+})(document, window);
 
-  .set.route(function(){
-    console.log("coucou");
-  })
 
-  .listen()
+
+
+
+
+
+
+
+
+//========================== TESTS =====================================================================
+ZRouter
+// set the root path (default "/")
+    .setRoot("/home")
+    // set the loader template
+    .setLoaderTpl("<h2>The template is loading, be patient please!</h2>")
+    //add a route
+    .add({
+      url  : "/home",
+      template : '<p>This is an inline template</p>',
+      callback : function(options){
+        console.log("/home", options);
+      }
+    })
+    .add({
+      url  : "/home/truc",
+      template : '<p>This is an inline template with a long route</p>'
+    })
+    //add a route
+    .add({
+      url : "/test2/:prout",
+      templateUrl : 'partials/test2.html',
+      options: {
+        prout : "caca"
+      },
+      callback : function(options) {
+        console.log("Test2", options);
+      }
+    })
+    // listen for hash changes
+    .listen();

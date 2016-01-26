@@ -6,7 +6,7 @@
 
 ## How it works
 
-It watches the hash part of the current url and displayes different things depending on the hash path
+It watches the hash part of the current url and displays different things depending on the hash path
 
 You can pass parameters inside the hash path and use it in the template.
 
@@ -16,15 +16,16 @@ You can pass parameters inside the hash path and use it in the template.
 
 ### to display the demo
 
-* `npm i`       Will install all the dependances
-* `gulp build`  Builds the dist directory (usefull only for the first time)
+* `npm i`       Will install all the dependencies
+* `gulp build`  Builds the dist directory (useful only for the first time)
 * `gulp`        Watches the changes and browser-sync
 
 ---
 
-## Inspiration
+# TODO :
 
-[Javascript router in 100 lines](http://krasimirtsonev.com/blog/article/A-modern-JavaScript-router-in-100-lines-history-api-pushState-hash-url#comment-2459384542)
+* improve check method
+   * `/home` & `/home/2` will display the first one's template but shouldn't!
 
 ---
 
