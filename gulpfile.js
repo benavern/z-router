@@ -72,6 +72,7 @@ gulp.task('html', function() {
     .pipe(browserSync.reload({stream:true}))
 });
 
+
 gulp.task('build', ['html', 'styles', 'scripts']);
 
 gulp.task('default', ['browser-sync'], function(){

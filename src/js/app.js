@@ -1,11 +1,15 @@
 /**
- * ZRouter class
- * by benjamin Caradeuc
- * http://labo.caradeuc.info/z-router
+ * @class ZRouter
+ * @author Benjamin Caradeuc http://labo.caradeuc.info/z-router
+ * @copyright Benjamin Caradeuc 2016
+ * @license MIT http://benavern.github.io/MIT#name=benjamin%20caradeuc&link=http://caradeuc.info
  */
 var ZRouter = (function(document, window, undefined) {
 
-  // Private arguments & methods
+  /**
+   * Private arguments & methods
+   * @private
+   */
   var priv = {
     // the routes array
     routes    : [],
@@ -27,6 +31,9 @@ var ZRouter = (function(document, window, undefined) {
         if(typeof route.callback == "function") route.callback(route.options);
       }
       else if (!!route.templateUrl) {
+        // display the loader
+        pub.render(priv.loaderTpl);
+        // fetch the template data
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
           if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -34,7 +41,7 @@ var ZRouter = (function(document, window, undefined) {
             pub.render(pub.tp(xhttp.responseText, route.options));
             if(typeof route.callback == "function") route.callback(route.options);
           }
-          else {
+          else if (xhttp.status == 404){
             pub.render("<h1>Error " + xhttp.status + "</h1>");
           }
         };
@@ -44,7 +51,10 @@ var ZRouter = (function(document, window, undefined) {
     }
   };
 
-  // Public arguments & methods
+  /**
+   * Public arguments & methods
+   * @public
+   */
   var pub = {
 
     /**
@@ -52,7 +62,7 @@ var ZRouter = (function(document, window, undefined) {
      * @returns {string}
      */
     getFragment: function() {
-      if(window.location.hash === '') pub.navigate(priv.root); // no infinite loop when no or empty hash provided
+      if(window.location.hash === "") window.location.hash = "#" + priv.root; // no infinite loop when no or empty hash provided
       var match = window.location.href.match(/#(.*)$/),
           fragment = match ? match[1] : '';
       return fragment.toString();//.replace(/\/$/, '').replace(/^\//, ''); // don't remove first & last slash or #/ wont work!
@@ -108,7 +118,7 @@ var ZRouter = (function(document, window, undefined) {
 
       for(var x = 0; x < priv.routes.length; x++){
         var currRoute = priv.routes[x];
-        var routeMatcher = new RegExp(currRoute.url.replace(/(:\w+)/g, '([\\w-]+)'));
+        var routeMatcher = new RegExp("^" +currRoute.url.replace(/(:\w+)/g, '([\\w-]+)') + "$");
         argsVal = fragment.match(routeMatcher);
         if(argsVal) {
           argsVal.shift(); // to remove the first array element
@@ -120,7 +130,6 @@ var ZRouter = (function(document, window, undefined) {
           }
           if(!currRoute.options) currRoute.options = {};
           currRoute.options.params = params;
-          //pub.render(priv.loaderTpl);
           priv.getTemplate(currRoute);
           return pub;
         }
@@ -215,9 +224,14 @@ var ZRouter = (function(document, window, undefined) {
 //========================== TESTS =====================================================================
 ZRouter
 // set the root path (default "/")
-    .setRoot("/home")
+    .setRoot("/")
     // set the loader template
     .setLoaderTpl("<h2>The template is loading, be patient please!</h2>")
+    //add a route
+    .add({
+      url : "/",
+      template:"I am the root template"
+    })
     //add a route
     .add({
       url  : "/home",
@@ -226,9 +240,10 @@ ZRouter
         console.log("/home", options);
       }
     })
+    //add a route
     .add({
-      url  : "/home/truc",
-      template : '<p>This is an inline template with a long route</p>'
+      url  : "/home/:truc",
+      template : '<p>This is an inline template with a longer route, its parameter is "<% this.params.truc %>"</p>'
     })
     //add a route
     .add({
@@ -238,7 +253,7 @@ ZRouter
         prout : "caca"
       },
       callback : function(options) {
-        console.log("Test2", options);
+        console.log("/test2/:prout", options);
       }
     })
     // listen for hash changes

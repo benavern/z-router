@@ -22,10 +22,10 @@ You can pass parameters inside the hash path and use it in the template.
 
 ---
 
-# TODO :
+## TODO :
 
-* improve check method
-   * `/home` & `/home/2` will display the first one's template but shouldn't!
+* Improve check method ?
+* Make the documentation page!
 
 ---
 
