@@ -256,6 +256,54 @@ a.btn, button.btn
 .big
   font-size: 2em
 
+.browser-window
+  background: #AAA
+  border-radius: .3em
+  padding: 3rem .5rem .5rem
+  position: relative
+  margin: 2rem 0
+  width: 100%
+  box-shadow: 0 0 10px rgba(black, .3)
+
+  .address-bar
+    background: #fefefe
+    color: #444
+    width: 75%
+    position: absolute
+    top: .5rem
+    left: .5rem
+    border-radius: .2em
+    color: #666
+    font-style: italic
+    &:before
+      content: "my.website.com/"
+      color: #AAA
+      margin-left: .5rem
+  .round
+    width: 1rem
+    height: 1rem
+    position: absolute
+    top: .5rem
+    right: .5rem
+    border-radius: 50%
+    box-shadow: 0 0 5px rgba(black, .3) inset
+    &.red
+      background: #E66
+      margin-right: 3rem
+    &.yellow
+      background: #EE6
+      margin-right: 1.5rem
+    &.green
+      background: #3B3
+
+  #z-router-view
+    background: #fff
+    padding: 1rem
+    border-radius: .2em
+    height: 18rem
+    overflow: auto
+    box-shadow: 0 0 5px rgba(black, .3) inset
+
 footer
   background: #444
   padding: 100px 0 70px

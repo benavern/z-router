@@ -44,7 +44,7 @@ gulp.task('styles', function() {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src('src/js/**/*.js')
+  return gulp.src(['src/js/ZRouter.js','src/js/app.js'])
     .pipe(plumber({
       errorHandler: function (error) {
         console.log(error.message);
@@ -72,12 +72,26 @@ gulp.task('html', function() {
     .pipe(browserSync.reload({stream:true}))
 });
 
+gulp.task('download', function() {
+  return gulp.src('src/js/ZRouter.js')
+    .pipe(plumber({
+      errorHandler: function (error) {
+        console.log(error.message);
+        this.emit('end');
+    }}))
+    .pipe(rename({basename: 'ZRouter'}))
+    .pipe(gulp.dest('dist/download/'))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/download/'))
+});
 
-gulp.task('build', ['html', 'styles', 'scripts']);
+
+gulp.task('build', ['html', 'styles', 'scripts', 'download']);
 
 gulp.task('default', ['browser-sync'], function(){
   gulp.watch("src/sass/**/*.sass", ['styles']);
-  gulp.watch("src/js/**/*.js", ['scripts']);
+  gulp.watch("src/js/**/*.js", ['scripts', 'download']);
   gulp.watch("src/**/*.html", ['bs-reload']);
   gulp.watch("src/**/*.jade", ['html']);
 });

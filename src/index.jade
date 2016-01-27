@@ -21,7 +21,7 @@ html(lang="en")
       .wrapper
         h2 What is Z-router ?
         p Z-router is a light javascript router based on the hash <span class="inline-code">#</span> part of the url allowing you to display inline or ajax-fetched templates.
-        p No dependencies are required, It is very simple to use and is very flexible with the possibility to add options to each route and get parameters from the url.
+        p No dependencies are required, It is very simple to use and is very flexible with the possibility to add parameters into the url and use it in the template.
 
         .grid
           .grid-2.center
@@ -41,16 +41,21 @@ html(lang="en")
       
         h2 Demo :
         
-        ul
-          li
-            a(href="#/") /
-          li
-            a(href="#/home") /home
-          li
-            a(href="#/home/2") /home/2
-          li
-            a(href="#/test2/yolo") /test2/{yolo}
-        div#z-router-view
+        p Here are some routes examples, click on them and see the magic in the browser window just below.
+        
+        p
+          a.btn(href="#/") /
+          a.btn(href="#/home") /home
+          a.btn(href="#/home/2") /home/2
+          a.btn(href="#/test2/yolo") /test2/{yolo}
+        
+        .browser-window
+          .address-bar
+          .round.red
+          .round.yellow
+          .round.green
+            
+          #z-router-view
 
     section
       .wrapper
@@ -92,43 +97,4 @@ html(lang="en")
 
 
     script(src="js/main.min.js")
-    script(type='text/javascript').
-      //========================== TESTS =====================================================================
-      ZRouter
-      // set the root path (default "/")
-          .setRoot("/")
-          // set the loader template
-          .setLoaderTpl("<h2>The template is loading, be patient please!</h2>")
-          //add a route
-          .add({
-            url : "/",
-            template:"I am the root template"
-          })
-          //add a route
-          .add({
-            url  : "/home",
-            template : '<p>This is an inline template</p>',
-            callback : function(options){
-              console.log("/home", options);
-            }
-          })
-          //add a route
-          .add({
-            url  : "/home/:truc",
-            template : '<p>This is an inline template with a longer route, its parameter is "<% this.params.truc %>"</p>'
-          })
-          //add a route
-          .add({
-            url : "/test2/:prout",
-            templateUrl : 'partials/test2.html',
-            options: {
-              prout : "caca"
-            },
-            callback : function(options) {
-              console.log("/test2/:prout", options);
-            }
-          })
-          // listen for hash changes
-          .listen();
-
-  
+      
