@@ -1,6 +1,6 @@
 @media(max-width: 960px)
   html
-    font-size: 15px
+    font-size: 14px
 
 body
   background: #f2f2f2
@@ -14,8 +14,8 @@ body
   margin: 0 auto
 
 header
-  background-color: #B99A42
-  background-image: url("http://www.transparenttextures.com/patterns/cubes.png")
+  background-color: #dece1f
+  background-image: url("http://www.transparenttextures.com/patterns/connected.png")
   color: white
   padding: 150px 0 200px
   margin-bottom: -100px
@@ -45,6 +45,7 @@ header
     &:hover
       opacity: 1
       background: rgba(black, .1)
+      text-decoration: none
 
   h1
     font-size: 5rem
@@ -57,22 +58,108 @@ header
     position: relative
     box-shadow: 0 0 15px rgba(black, .3)
 
-    &:after
-      content: ""
-      display: block
-      width: 0
-      height: 0
-      border: 16px solid transparent
-      border-top-color: #444
-      position: absolute
-      top: 100%
-      left: 50%
-      transform: translateX(-50%)
-
     @media(max-width: 960px)
       font-size: 3rem
       &:after
         border-width: 12px
+
+    span.arrow
+      background: #444
+      position: absolute
+      display:block
+
+      &.left
+        top: 50%
+        left: -1.5rem
+        height: 2rem
+        width: 1.5rem
+        margin-top: -0.8rem
+        &:after
+          content: ""
+          position: absolute
+          left: -4rem
+          top: -1rem
+          height: 0
+          width: 0
+          border:
+            width: 2rem
+            style: solid
+            color: transparent #444 transparent transparent
+
+      &.right
+        top: 50%
+        right: -1.5rem
+        height: 2rem
+        width: 1.5rem
+        margin-top: -0.8rem
+        &:after
+          content: ""
+          position: absolute
+          right: -4rem
+          top: -1rem
+          height: 0
+          width: 0
+          border:
+            width: 2rem
+            style: solid
+            color: transparent transparent transparent #444
+
+      &.top
+        top: -1rem
+        left: 60%
+        height: 1rem
+        width: 2rem
+
+        &:before
+          content: ""
+          position: relative
+          display: block
+          top: -2rem
+          left: 0
+          height: 2rem
+          width: 3rem
+          background: #444
+
+        &:after
+          content: ""
+          position: absolute
+          right: -5rem
+          top: -3rem
+          height: 0
+          width: 0
+          border-width: 2rem
+          border-style: solid
+          border-color: transparent transparent transparent #444
+
+      &.bottom
+        bottom: -1rem
+        left: 30%
+        height: 1rem
+        width: 2rem
+
+        &:before
+          content: ""
+          position: relative
+          display: block
+          bottom: -1rem
+          right: 1rem
+          height: 2rem
+          width: 3rem
+          background: #444
+
+        &:after
+          content: ""
+          position: absolute
+          left: -5rem
+          bottom: -3rem
+          height: 0
+          width: 0
+          border-width: 2rem
+          border-style: solid
+          border-color: transparent #444 transparent transparent
+
+
+
 
 section
   background: transparent
