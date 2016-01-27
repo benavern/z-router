@@ -14,8 +14,9 @@ body
   margin: 0 auto
 
 header
-  background-color: #dece1f
-  background-image: url("http://www.transparenttextures.com/patterns/connected.png")
+  background:
+    color: #db3
+    image: url("http://www.transparenttextures.com/patterns/connected.png")
   color: white
   padding: 150px 0 200px
   margin-bottom: -100px
@@ -66,7 +67,7 @@ header
     span.arrow
       background: #444
       position: absolute
-      display:block
+      display: block
 
       &.left
         top: 50%
@@ -127,9 +128,10 @@ header
           top: -3rem
           height: 0
           width: 0
-          border-width: 2rem
-          border-style: solid
-          border-color: transparent transparent transparent #444
+          border:
+            width: 2rem
+            style: solid
+            color: transparent transparent transparent #444
 
       &.bottom
         bottom: -1rem
@@ -154,9 +156,10 @@ header
           bottom: -3rem
           height: 0
           width: 0
-          border-width: 2rem
-          border-style: solid
-          border-color: transparent #444 transparent transparent
+          border:
+            width: 2rem
+            style: solid
+            color: transparent #444 transparent transparent
 
 
 
@@ -210,7 +213,7 @@ section
         display: block
         margin: .5rem 0
 
-/* entypo */
+/* Entypo font */
 [class*="entypo-"]:before
   font-family: 'entypo', sans-serif
 
@@ -256,29 +259,38 @@ a.btn, button.btn
 .big
   font-size: 2em
 
+hr
+  display: block
+  height: .2rem
+  background: #BBB
+  border: none
+  margin: 2rem
+  box-shadow: 0 0 15px rgba(black, .3)
+
 .browser-window
-  background: #AAA
+  background: #bbb
   border-radius: .3em
   padding: 3rem .5rem .5rem
   position: relative
   margin: 2rem 0
   width: 100%
-  box-shadow: 0 0 10px rgba(black, .3)
+  box-shadow: 0 0 15px rgba(black, .3)
 
   .address-bar
     background: #fefefe
-    color: #444
     width: 75%
     position: absolute
     top: .5rem
     left: .5rem
-    border-radius: .2em
+    border-radius: .2rem
+    padding: 0 1rem
     color: #666
     font-style: italic
+    box-shadow: 0 0 5px rgba(black, .3) inset
+
     &:before
       content: "my.website.com/"
       color: #AAA
-      margin-left: .5rem
   .round
     width: 1rem
     height: 1rem
@@ -300,7 +312,7 @@ a.btn, button.btn
     background: #fff
     padding: 1rem
     border-radius: .2em
-    height: 18rem
+    height: 22rem
     overflow: auto
     box-shadow: 0 0 5px rgba(black, .3) inset
 

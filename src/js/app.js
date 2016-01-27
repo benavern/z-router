@@ -1,46 +1,73 @@
 //========================== TESTS =====================================================================
 ZRouter
 // set the root path (default "/")
-    .setRoot("/")
-    // set the loader template
-    .setLoaderTpl("<h2>The template is loading, be patient please!</h2>")
-    //add a route
-    .add({
-      url : "/",
-      template:"I am the root template",
+  .setRoot("/")
+  // set the loader template
+  .setLoaderTpl('<h2>The template is loading, be patient please!</h2>')
+
+  //add a route
+  .add({
+    url : "/",
+    template: '<h2>The root Url</h2>' +
+              '<hr>' +
+              '<p>url : "<% this.url %>"</p>' +
+              '<p>What is the root url?</p>' +
+              '<ul><li>It will be automatically loaded if no route has been provided on page load</li>' +
+              '<li>It will be loaded if no route matches the entered url</li></ul>' +
+              '<p>It can be changed : <span class="inline-code">ZRouter.setRoot("/newRootRoute")</span></p>',
+    options: {
+      url : "/"
+    },
+    callback : function(options){
+      displayhashRoute();
+    }
+  })
+
+  //add a route
+  .add({
+    url  : "/user",
+    template : '<h2>A Normal route</h2>' +
+                '<hr>' +
+                '<p>url : <% this.url %></p>' +
+                '<p>You could probably use this route to display a list of users...</p>',
+    options:{
+      url: "/user"
+    },
+    callback : function(options){
+      displayhashRoute();
+    }
+  })
+
+  //add a route
+  .add({
+    url  : "/user/:id",
+    template : '<h2>A route with parameter </h2>' +
+                '<hr>' +
+                '<p>url : <% this.url %></p>'+
+                '<p>parameter : id = <% this.params.id %></p>' +
+                '<p>You could probably use this route to display a specific user</p>',
+    options: {
+      url: "/user/:id"
+    },
       callback : function(options){
-        displayhashRoute();
-      }
-    })
-    //add a route
-    .add({
-      url  : "/home",
-      template : '<p>This is an inline template</p>',
-      callback : function(options){
-        displayhashRoute();
-      }
-    })
-    //add a route
-    .add({
-      url  : "/home/:truc",
-      template : '<p>This is an inline template with a longer route, its parameter is "<% this.params.truc %>"</p>',
-      callback : function(options){
-        displayhashRoute();
-      }
-    })
-    //add a route
-    .add({
-      url : "/test2/:page",
-      templateUrl : 'partials/test2.html',
-      options: {
-        page2 : "42"
-      },
-      callback : function(options) {
-        displayhashRoute();
-      }
-    })
-    // listen for hash changes
-    .listen();
+      displayhashRoute();
+    }
+  })
+
+  //add a route
+  .add({
+    url : "/fetched",
+    templateUrl : 'partials/fetched.html',
+    options: {
+      url : "/fetched"
+    },
+    callback : function(options) {
+      displayhashRoute();
+    }
+  })
+
+  // listen for hash changes
+  .listen();
 
 function displayhashRoute (){
   var url = window.location.hash;
