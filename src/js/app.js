@@ -4,7 +4,7 @@
  * @copyright Benjamin Caradeuc 2016
  * @license MIT http://benavern.github.io/MIT#name=benjamin%20caradeuc&link=http://caradeuc.info
  */
-var ZRouter = (function(document, window, undefined) {
+var ZRouter = (function(document, window) {
 
   /**
    * Private arguments & methods
@@ -211,50 +211,3 @@ var ZRouter = (function(document, window, undefined) {
   // expose the "pub" things and keep "priv" 's ones safe.
   return pub;
 })(document, window);
-
-
-
-
-
-
-
-
-
-
-//========================== TESTS =====================================================================
-ZRouter
-// set the root path (default "/")
-    .setRoot("/")
-    // set the loader template
-    .setLoaderTpl("<h2>The template is loading, be patient please!</h2>")
-    //add a route
-    .add({
-      url : "/",
-      template:"I am the root template"
-    })
-    //add a route
-    .add({
-      url  : "/home",
-      template : '<p>This is an inline template</p>',
-      callback : function(options){
-        console.log("/home", options);
-      }
-    })
-    //add a route
-    .add({
-      url  : "/home/:truc",
-      template : '<p>This is an inline template with a longer route, its parameter is "<% this.params.truc %>"</p>'
-    })
-    //add a route
-    .add({
-      url : "/test2/:prout",
-      templateUrl : 'partials/test2.html',
-      options: {
-        prout : "caca"
-      },
-      callback : function(options) {
-        console.log("/test2/:prout", options);
-      }
-    })
-    // listen for hash changes
-    .listen();

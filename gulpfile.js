@@ -76,7 +76,7 @@ gulp.task('html', function() {
 gulp.task('build', ['html', 'styles', 'scripts']);
 
 gulp.task('default', ['browser-sync'], function(){
-  gulp.watch("src/sass/**/*.scss", ['styles']);
+  gulp.watch("src/sass/**/*.sass", ['styles']);
   gulp.watch("src/js/**/*.js", ['scripts']);
   gulp.watch("src/**/*.html", ['bs-reload']);
   gulp.watch("src/**/*.jade", ['html']);

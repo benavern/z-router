@@ -3,20 +3,124 @@ html(lang="en")
   head
     meta(charset="UTF-8")
     title Z-Router
+    link(rel="stylesheet", type="text/css", href="css/style.css")
 
   body
-    h1 Hello, World!
-    ul
-      li
-        a(href="#/") /
-      li
-        a(href="#/home") /home
-      li
-        a(href="#/home/2") /home/2
-      li
-        a(href="#/test2/yolo") /test2/{yolo}
 
-    div#z-router-view
+    header
+      a(href="http://labo.caradeuc.info/", class="back") &lt; labo
+      .wrapper
+        h1 Z-Router
 
-    script(src="js/main.js")
+    section
+      .wrapper
+        h2 What is Z-router ?
+        p Z-router is a light javascript router based on the hash <span class="inline-code">#</span> part of the url allowing you to display inline or ajax-fetched templates.
+        p No dependencies are required, It is very simple to use and is very flexible with the possibility to add options to each route and get parameters from the url.
+
+        .grid
+          .grid-2.center
+            .box
+              a(href="http://github.com/benavern/z-router", data-ztooltips="View this project on Github").btn.z-tooltips-top
+                span.entypo-github
+                | &nbsp; github
+
+          .grid-2.center
+            .box
+              a(href="download", data-ztooltips="Download the js script").btn
+                span.entypo-download
+                | &nbsp; download
+
+    section
+      .wrapper
+        ul
+          li
+            a(href="#/") /
+          li
+            a(href="#/home") /home
+          li
+            a(href="#/home/2") /home/2
+          li
+            a(href="#/test2/yolo") /test2/{yolo}
+        div#z-router-view
+
+    section
+      .wrapper
+        h2 More :
+        p I developed this for me and wanted to share it with you because I think it can be usefull.
+        p I don't guarantee that it is perfect but I tried to do my best.
+        p Contributions, forks, pull requests, comments... are welcome!
+
+
+    footer
+      .wrapper
+        .grid
+          .grid-2
+            .box.center
+              p
+                | Made with
+                span(data-ztooltips="LOVE").big &nbsp;
+                  span.pink.entypo-heart &nbsp;
+                | by
+                a(href="http://caradeuc.info") Benjamin Caradeuc
+
+              p
+                a(href="mailto:benjamin@caradeuc.info", data-ztooltips="benjamin@caradeuc.info").btn
+                  span.entypo-mail &nbsp;
+                  | contact me
+
+
+          .grid-2
+            .box.center
+              p Share my work !
+              a(data-ztooltips="Share via facebook", href="http://www.facebook.com/sharer.php?u=http://labo.caradeuc.info/z-router/").social-btn.facebook
+                span.entypo-facebook
+              a(data-ztooltips="Share via twitter", href="https://twitter.com/share?url=http://labo.caradeuc.info/z-router/&via=benavern").social-btn.twitter
+                span.entypo-twitter
+
+
+
+
+
+
+    script(src="js/main.min.js")
+    script(type='text/javascript').
+      //========================== TESTS =====================================================================
+      ZRouter
+      // set the root path (default "/")
+          .setRoot("/")
+          // set the loader template
+          .setLoaderTpl("<h2>The template is loading, be patient please!</h2>")
+          //add a route
+          .add({
+            url : "/",
+            template:"I am the root template"
+          })
+          //add a route
+          .add({
+            url  : "/home",
+            template : '<p>This is an inline template</p>',
+            callback : function(options){
+              console.log("/home", options);
+            }
+          })
+          //add a route
+          .add({
+            url  : "/home/:truc",
+            template : '<p>This is an inline template with a longer route, its parameter is "<% this.params.truc %>"</p>'
+          })
+          //add a route
+          .add({
+            url : "/test2/:prout",
+            templateUrl : 'partials/test2.html',
+            options: {
+              prout : "caca"
+            },
+            callback : function(options) {
+              console.log("/test2/:prout", options);
+            }
+          })
+          // listen for hash changes
+          .listen();
+
   
