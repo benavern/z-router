@@ -12,20 +12,26 @@ You can pass parameters inside the hash path and use it in the template.
 
 ---
 
-## HowTo
+## Documentation
 
-### to display the demo
-
-* `npm i`       Will install all the dependencies
-* `gulp build`  Builds the dist directory (useful only for the first time)
-* `gulp`        Watches the changes and browser-sync
+[http://labo.caradeuc.info/z-router](http://labo.caradeuc.info/z-router)
 
 ---
 
-## TODO :
+## Contribute
 
-* Improve check method ?
-* Make the documentation page!
+### Make it work on your desktop
+
+| Command | Description |
+|---------|-------------|
+| `git clone https://github.com/benabern/z-router` | Clone the repo on your desktop (don't forget to be in the desired folder, after cloning `cd z-router`) |
+| `npm i` | Will install all the dependencies that are needed |
+| `gulp build` | Builds the `dist` directory |
+| `gulp` (default) | Watches the changes and browser-sync |
+
+### Conditions
+
+Don't hesitate to fork and pull request. I'll am very curious to know how to improve it!
 
 ---
 
