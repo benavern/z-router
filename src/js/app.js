@@ -10,7 +10,7 @@ ZRouter
     url : "/",
     template: '<h2>The root Url</h2>' +
               '<hr>' +
-              '<p>url : "<% this.url %>"</p>' +
+              '<p><span class="inline-code"> url : "<% this.url %>" </span></p>' +
               '<p>What is the root url?</p>' +
               '<ul><li>It will be automatically loaded if no route has been provided on page load</li>' +
               '<li>It will be loaded if no route matches the entered url</li></ul>' +
@@ -28,7 +28,7 @@ ZRouter
     url  : "/user",
     template : '<h2>A Normal route</h2>' +
                 '<hr>' +
-                '<p>url : <% this.url %></p>' +
+                '<p><span class="inline-code"> url : "<% this.url %>" </span></p>' +
                 '<p>You could probably use this route to display a list of users...</p>',
     options:{
       url: "/user"
@@ -43,8 +43,8 @@ ZRouter
     url  : "/user/:id",
     template : '<h2>A route with parameter </h2>' +
                 '<hr>' +
-                '<p>url : <% this.url %></p>'+
-                '<p>parameter : id = <% this.params.id %></p>' +
+                '<p><span class="inline-code"> url : "<% this.url %>" </span></p>' +
+                '<p><span class="inline-code"> parameter : id = <% this.params.id %> </span></p>' +
                 '<p>You could probably use this route to display a specific user</p>',
     options: {
       url: "/user/:id"

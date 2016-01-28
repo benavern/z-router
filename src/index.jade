@@ -4,6 +4,7 @@ html(lang="en")
     meta(charset="UTF-8")
     title Z-Router
     link(rel="stylesheet", type="text/css", href="css/style.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/monokai-sublime.min.css")
     meta(name="viewport", content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0")
 
   body
@@ -59,6 +60,142 @@ html(lang="en")
 
     section
       .wrapper
+        h2 How to build a route
+        p A route is an object with some properties : 
+        ul
+          li A url {String}
+          li A options object ( that will be available in the template & the callback ) {optional}
+          li A template (can be inline html OR external html file): 
+            ul
+              li Inline {String}
+              li External (will not be fetched if an inline template is provided) {string | optional}
+          li A callback function {function | optional}
+            
+        hr
+        h3 Example :
+        pre
+          code.javascript.
+            {
+              url: "/home",
+              options: {
+                siteName: "Z-Router"
+              },
+              template: "&lt;h1&gt; My website is called : &lt;% this.siteName %&gt; &lt;/h1&gt;",
+              callback : function(options) {
+                console.log("Hello, the website is called " + options.siteName);
+              }
+            }
+            
+        
+    section
+      .wrapper    
+        h2 Z-Router methods :
+        p ZRouter is the main "object Class", most of its methods are chaining capable.
+        ul
+          li 
+            span.inline-code setRoot()
+            p Sets the default route in the router. It is used when no route provided on load or when the route asked doesn't exist.
+            
+          li 
+            span.inline-code setLoaderTpl()
+            p Sets what will be displayed when the router is fetching a template. It is inline html in a string.
+            
+          li 
+            span.inline-code add()
+            p Adds a route in the routes array of the router. You have to pass a valid route or it won't be registered
+            
+          li 
+            span.inline-code navigate()
+            p Changes the hash to the url passed in.
+            
+          li 
+            span.inline-code listen()
+            p Starts the hash listener, so that when it changes, the new template will replace the current one. (better use at the end of the routes declaration)
+            
+    section
+      .wrapper    
+        h2 Z-Router Example:
+        p Here is the code for a simple router:
+        pre
+          code.javascript.
+            ZRouter
+            // set the root path (default "/")
+              .setRoot("/")
+              // set the loader template
+              .setLoaderTpl('&lt;h2&gt;The template is loading, be patient please!&lt;/h2&gt;')
+
+              //add a route
+              .add({
+                url : "/",
+                template: '&lt;h2&gt;The root Url&lt;/h2&gt;' +
+                          '&lt;hr&gt;' +
+                          '&lt;p&gt;&lt;span class="inline-code"&gt; url : "&lt;% this.url %&gt;" &lt;/span&gt;&lt;/p&gt;' +
+                          '&lt;p&gt;What is the root url?&lt;/p&gt;' +
+                          '&lt;ul&gt;&lt;li&gt;It will be automatically loaded if no route has been provided on page load&lt;/li&gt;' +
+                          '&lt;li&gt;It will be loaded if no route matches the entered url&lt;/li&gt;&lt;/ul&gt;' +
+                          '&lt;p&gt;It can be changed : &lt;span class="inline-code"&gt;ZRouter.setRoot("/newRootRoute")&lt;/span&gt;&lt;/p&gt;',
+                options: {
+                  url : "/"
+                },
+                callback : function(options){
+                  displayhashRoute();
+                }
+              })
+
+              //add a route
+              .add({
+                url  : "/user",
+                template : '&lt;h2&gt;A Normal route&lt;/h2&gt;' +
+                            '&lt;hr&gt;' +
+                            '&lt;p&gt;&lt;span class="inline-code"&gt; url : "&lt;% this.url %&gt;" &lt;/span&gt;&lt;/p&gt;' +
+                            '&lt;p&gt;You could probably use this route to display a list of users...&lt;/p&gt;',
+                options:{
+                  url: "/user"
+                },
+                callback : function(options){
+                  displayhashRoute();
+                }
+              })
+
+              //add a route
+              .add({
+                url  : "/user/:id",
+                template : '&lt;h2&gt;A route with parameter &lt;/h2&gt;' +
+                            '&lt;hr&gt;' +
+                            '&lt;p&gt;&lt;span class="inline-code"&gt; url : "&lt;% this.url %&gt;" &lt;/span&gt;&lt;/p&gt;' +
+                            '&lt;p&gt;&lt;span class="inline-code"&gt; parameter : id = &lt;% this.params.id %&gt; &lt;/span&gt;&lt;/p&gt;' +
+                            '&lt;p&gt;You could probably use this route to display a specific user&lt;/p&gt;',
+                options: {
+                  url: "/user/:id"
+                },
+                  callback : function(options){
+                  displayhashRoute();
+                }
+              })
+
+              //add a route
+              .add({
+                url : "/fetched",
+                templateUrl : 'partials/fetched.html',
+                options: {
+                  url : "/fetched"
+                },
+                callback : function(options) {
+                  displayhashRoute();
+                }
+              })
+
+              // listen for hash changes
+              .listen();
+              
+              //display the hash url inside the adressbar of the fake browser
+              function displayhashRoute (){
+                var url = window.location.hash;
+                document.querySelector('.address-bar').innerHTML = url;
+              }
+        
+    section
+      .wrapper
         h2 More :
         p I developed this for me and wanted to share it with you because I think it can be usefull.
         p I don't guarantee that it is perfect but I tried to do my best.
@@ -98,4 +235,5 @@ html(lang="en")
 
     script(src="js/main.min.js")
     script(src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js")
+    script hljs.initHighlightingOnLoad();
       
