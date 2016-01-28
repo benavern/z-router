@@ -64,12 +64,27 @@ html(lang="en")
         p A route is an object with some properties : 
         ul
           li A url {String}
+            p 
+              | Parameters can be passed in the route, you'll have to use that syntax : 
+              span.inline-code /home/:index
+              | and the <b>index</b> parameter will have the value passed in the url.
           li A options object ( that will be available in the template & the callback ) {optional}
-          li A template (can be inline html OR external html file): 
+          li A template (can be inline html OR external html file):
+            p 
+              a(href="http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line", target="_blank") More information about the template engine's functionalities
             ul
               li Inline {String}
-              li External (will not be fetched if an inline template is provided) {string | optional}
+              li External {string | optional}
+                p It will be ignored if there is a <b>template</b> provided in the route declaration.
+                p The fetched template is added to the route as an (inline) <b>template</b> once the ajax call ended.
           li A callback function {function | optional}
+            p 
+              | The 
+              span.inline-code options
+              | object of the route is available in it.
+            p 
+              span.inline-code options.params
+              | is the object containing the url parameters. (doesn't exist if no parameters in the url)
             
         hr
         h3 Example :
@@ -90,7 +105,9 @@ html(lang="en")
     section
       .wrapper    
         h2 Z-Router methods :
-        p ZRouter is the main "object Class", most of its methods are chaining capable.
+        p 
+          | ZRouter is the main "object Class", most of its methods are 
+          a(href="http://lmgtfy.com/?q=method+chaining+javascript", target="_blank") chaining capable.
         ul
           li 
             span.inline-code setRoot()
@@ -107,6 +124,10 @@ html(lang="en")
           li 
             span.inline-code navigate()
             p Changes the hash to the url passed in.
+            
+          li 
+            span.inline-code check()
+            p Forces the router to recheck the hash part of the url (usefull if you do not use the listen method)
             
           li 
             span.inline-code listen()

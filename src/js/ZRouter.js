@@ -27,7 +27,7 @@ var ZRouter = (function(document, window) {
     getTemplate: function (route) {
       // fetches the template if needed & compiles it then returns it (to simulate caching, fetched data is inserted in the template of the selected route )
       if (!!route.template) {
-        pub.render(pub.tp(route.template, route.options));
+        pub.render(priv.tp(route.template, route.options));
         if(typeof route.callback == "function") route.callback(route.options);
       }
       else if (!!route.templateUrl) {
@@ -38,7 +38,7 @@ var ZRouter = (function(document, window) {
         xhttp.onreadystatechange = function () {
           if (xhttp.readyState == 4 && xhttp.status == 200) {
             route.template = xhttp.responseText;
-            pub.render(pub.tp(xhttp.responseText, route.options));
+            pub.render(priv.tp(xhttp.responseText, route.options));
             if(typeof route.callback == "function") route.callback(route.options);
           }
           else if (xhttp.status == 404){
@@ -48,14 +48,7 @@ var ZRouter = (function(document, window) {
         xhttp.open("GET", route.templateUrl, true);
         xhttp.send();
       }
-    }
-  };
-
-  /**
-   * Public arguments & methods
-   * @public
-   */
-  var pub = {
+    },
 
     /**
      * Get the hash part of the actual url (prettified)
@@ -68,6 +61,42 @@ var ZRouter = (function(document, window) {
       return fragment.toString();//.replace(/\/$/, '').replace(/^\//, ''); // don't remove first & last slash or #/ wont work!
     },
 
+    /**
+     * Populates the view with the options properties passed to it (for loops etc...)
+     * http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
+     * @param html
+     * @param options
+     * @returns {html}
+     */
+    tp : function (html, options) {
+      //pass the html and options in and this will return the html populated with the options data
+      // http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
+      var re = /<%([^%>]+)?%>/g,
+          reExp  = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
+          code   = 'var r=[];\n',
+          cursor = 0,
+          match;
+      var add = function(line, js) {
+        js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
+            (code += line !== '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+        return add;
+      };
+      while(match = re.exec(html)) {
+        add(html.slice(cursor, match.index))(match[1], true);
+        cursor = match.index + match[0].length;
+      }
+      add(html.substr(cursor, html.length - cursor));
+      code += 'return r.join("");';
+      return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
+    }
+  };
+
+
+  /**
+   * Public arguments & methods
+   * @public
+   */
+  var pub = {
 
     /**
      * Sets the root route url (@default: "/")
@@ -111,7 +140,7 @@ var ZRouter = (function(document, window) {
      */
     check: function(f){
       // checks the current fragment and calls render method
-      var fragment = f || pub.getFragment(),
+      var fragment = f || priv.getFragment(),
           argsVal,
           argsNames,
           params = {};
@@ -147,8 +176,8 @@ var ZRouter = (function(document, window) {
       var currentFragment = null, // to be sure it will be fired onload
           interval;
       var fn = function() {
-        if(currentFragment !== pub.getFragment()) {
-          currentFragment = pub.getFragment();
+        if(currentFragment !== priv.getFragment()) {
+          currentFragment = priv.getFragment();
           pub.check(currentFragment);
         }
       };
@@ -176,35 +205,6 @@ var ZRouter = (function(document, window) {
       path = path ? path : '';
       window.location.href = window.location.href.replace(/#(.*)$/, '#' + path);
       return pub;
-    },
-
-    /**
-     * Populates the view with the options properties passed to it (for loops etc...)
-     * http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
-     * @param html
-     * @param options
-     * @returns {html}
-     */
-    tp : function (html, options) {
-      //pass the html and options in and this will return the html populated with the options data
-      // http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
-      var re = /<%([^%>]+)?%>/g,
-          reExp  = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
-          code   = 'var r=[];\n',
-          cursor = 0,
-          match;
-      var add = function(line, js) {
-        js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
-            (code += line !== '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
-        return add;
-      };
-      while(match = re.exec(html)) {
-        add(html.slice(cursor, match.index))(match[1], true);
-        cursor = match.index + match[0].length;
-      }
-      add(html.substr(cursor, html.length - cursor));
-      code += 'return r.join("");';
-      return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
     }
   };
 
