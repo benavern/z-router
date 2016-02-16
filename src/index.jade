@@ -45,10 +45,15 @@ html(lang="en")
         p Here are some routes examples, click on them and see the magic in the browser window just below.
         
         p
-          a.btn(href="#/") /
-          a.btn(href="#/user") /user
-          a.btn(href="#/user/42") /user/42
-          a.btn(href="#/fetched") /fetched
+          label
+            input(type="checkbox")#hashbang
+            |  Use hashbang
+        
+        p
+          a.btn.link-for-router(href="#/") /
+          a.btn.link-for-router(href="#/user") /user
+          a.btn.link-for-router(href="#/user/42") /user/42
+          a.btn.link-for-router(href="#/fetched") /fetched
         
         .browser-window
           .address-bar

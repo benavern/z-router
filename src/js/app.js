@@ -4,8 +4,6 @@ ZRouter
   .setRoot("/")
   // set the loader template
   .setLoaderTpl('<h2>The template is loading, be patient please!</h2>')
-  //set the prefix to use hashbang method
-  .hashbang(true)
   //add a route
   .add({
     url : "/",
@@ -45,7 +43,7 @@ ZRouter
     template : '<h2>A route with parameter </h2>' +
                 '<hr>' +
                 '<p><span class="inline-code"> url : "<% this.url %>" </span></p>' +
-                '<p><span class="inline-code"> parameter : id = <% this.params.id %> </span></p>' +
+                '<p><span class="inline-code"> params : id = <% this.params.id %> </span></p>' +
                 '<p>You could probably use this route to display a specific user</p>',
     options: {
       url: "/user/:id"
@@ -74,3 +72,12 @@ function displayhashRoute (){
   var url = window.location.hash;
   document.querySelector('.address-bar').innerHTML = url;
 }
+
+document.querySelector('#hashbang').addEventListener('change', function() {
+    var useBang = this.checked;
+    [].forEach.call(document.querySelectorAll('.link-for-router'), function(link) {
+      link.href = (useBang) ? link.href.replace("#", "#!") : link.href.replace("#!", "#");
+    });
+    ZRouter.hashbang(useBang).navigate('/');
+    displayhashRoute();
+});
