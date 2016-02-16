@@ -4,7 +4,8 @@ ZRouter
   .setRoot("/")
   // set the loader template
   .setLoaderTpl('<h2>The template is loading, be patient please!</h2>')
-
+  //set the prefix to use hashbang method
+  .hashbang(true)
   //add a route
   .add({
     url : "/",

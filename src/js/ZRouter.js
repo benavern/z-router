@@ -19,6 +19,8 @@ var ZRouter = (function(document, window) {
     el        : '#z-router-view',
     //the loader html template
     loaderTpl : "<p>Loading...</p>",
+    // the default prefix (can be set to hashbang #! for better seo)
+    prefix : '#',
 
     /**
      * Get the template (ajax or inline)
@@ -55,8 +57,9 @@ var ZRouter = (function(document, window) {
      * @returns {string}
      */
     getFragment: function() {
-      if(window.location.hash === "") window.location.hash = "#" + priv.root; // no infinite loop when no or empty hash provided
-      var match = window.location.href.match(/#(.*)$/),
+      if(window.location.hash === "") window.location.hash = priv.prefix + priv.root; // no infinite loop when no or empty hash provided
+      var re = new RegExp(priv.prefix + "(.*)$"),
+          match = window.location.href.match(re),
           fragment = match ? match[1] : '';
       return fragment.toString();//.replace(/\/$/, '').replace(/^\//, ''); // don't remove first & last slash or #/ wont work!
     },
@@ -203,7 +206,17 @@ var ZRouter = (function(document, window) {
      */
     navigate : function(path) {
       path = path ? path : '';
-      window.location.href = window.location.href.replace(/#(.*)$/, '#' + path);
+      window.location.href = window.location.href.replace(/#(.*)$/, priv.prefix + path);
+      return pub;
+    },
+
+    /**
+     *  hashbang sets the default prefix
+     * @param bang {boolean}
+     * @returns pub (method chaining)
+     */
+    hashbang: function(bang) {
+      priv.prefix = (bang === true) ? '#!' : '#';
       return pub;
     }
   };
