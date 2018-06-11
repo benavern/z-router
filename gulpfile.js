@@ -17,7 +17,7 @@ var browserSync  = require('browser-sync');
 gulp.task('browser-sync', function() {
   browserSync({
     server: {
-      baseDir: "./dist"
+      baseDir: "./docs"
     }
   });
 });
@@ -36,10 +36,10 @@ gulp.task('styles', function() {
     }}))
     .pipe(sass({indentedSyntax: true}))
     .pipe(autoprefixer('last 2 versions'))
-    .pipe(gulp.dest('dist/css/'))
+    .pipe(gulp.dest('docs/css/'))
     .pipe(rename({suffix: '.min'}))
     .pipe(minifycss())
-    .pipe(gulp.dest('dist/css/'))
+    .pipe(gulp.dest('docs/css/'))
     .pipe(browserSync.reload({stream:true}))
 });
 
@@ -53,10 +53,10 @@ gulp.task('scripts', function() {
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
     .pipe(concat('main.js'))
-    .pipe(gulp.dest('dist/js/'))
+    .pipe(gulp.dest('docs/js/'))
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify())
-    .pipe(gulp.dest('dist/js/'))
+    .pipe(gulp.dest('docs/js/'))
     .pipe(browserSync.reload({stream:true}))
 });
 
@@ -68,7 +68,7 @@ gulp.task('html', function() {
         this.emit('end');
     }}))
     .pipe(jade())
-    .pipe(gulp.dest('dist/'))
+    .pipe(gulp.dest('docs/'))
     .pipe(browserSync.reload({stream:true}))
 });
 
@@ -80,10 +80,10 @@ gulp.task('download', function() {
         this.emit('end');
     }}))
     .pipe(rename({basename: 'ZRouter'}))
-    .pipe(gulp.dest('dist/download/'))
+    .pipe(gulp.dest('docs/download/'))
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify())
-    .pipe(gulp.dest('dist/download/'))
+    .pipe(gulp.dest('docs/download/'))
 });
 
 

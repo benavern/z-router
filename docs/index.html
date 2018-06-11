@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Z-Router</title><link rel="stylesheet" type="text/css" href="css/style.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/monokai-sublime.min.css"><meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"></head><body><header><a href="http://labo.caradeuc.info/" class="back">&lt; labo</a><div class="wrapper"><h1>Z-Router<span class="arrow left"></span><span class="arrow top"></span><span class="arrow right"></span><span class="arrow bottom"></span></h1></div></header><section><div class="wrapper"><h2>What is Z-router ?</h2><p>Z-router is a light javascript router based on the hash <span class="inline-code">#</span> part of the url allowing you to display inline or ajax-fetched templates.</p><p>No dependencies are required, It is very simple to use and is very flexible with the possibility to add parameters into the url and use it in the template.</p><p>The only thing you'll have to do is adding a div <span class="inline-code">#z-router-view</span> and make your own routes. </p><div class="grid"><div class="grid-2 center"><div class="box"><a href="http://github.com/benavern/z-router" data-ztooltips="View this project on Github" class="btn z-tooltips-top"><span class="entypo-github"></span>&nbsp; github</a></div></div><div class="grid-2 center"><div class="box"><a href="download/ZRouter.min.js" data-ztooltips="Download the js script" class="btn"><span class="entypo-download"></span>&nbsp; download</a></div></div></div></div></section><section><div class="wrapper"><h2>Demo :</h2><p>Here are some routes examples, click on them and see the magic in the browser window just below.</p><p><label><input type="checkbox" id="hashbang"> Use hashbang</label></p><p><a href="#/" class="btn link-for-router">/</a><a href="#/user" class="btn link-for-router">/user</a><a href="#/user/42" class="btn link-for-router">/user/42</a><a href="#/fetched" class="btn link-for-router">/fetched</a></p><div class="browser-window"><div class="address-bar"></div><div class="round red"></div><div class="round yellow"></div><div class="round green"></div><div id="z-router-view"></div></div></div></section><section><div class="wrapper"><h2>How to build a route</h2><p>A route is an object with some properties : </p><ul><li>A url {String}<p> 
+Parameters can be passed in the route, you'll have to use that syntax : <span class="inline-code">/home/:index</span>and the <b>index</b> parameter will have the value passed in the url.</p></li><li>A options object ( that will be available in the template & the callback ) {optional}</li><li>A template (can be inline html OR external html file):<p> <a href="http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line" target="_blank">More information about the template engine's functionalities</a></p><ul><li>Inline {String}</li><li>External {string | optional}<p>It will be ignored if there is a <b>template</b> provided in the route declaration.</p><p>The fetched template is added to the route as an (inline) <b>template</b> once the ajax call ended.</p></li></ul></li><li>A callback function {function | optional}<p> 
+The <span class="inline-code">options</span>object of the route is available in it.</p><p> <span class="inline-code">options.params</span>is the object containing the url parameters. (doesn't exist if no parameters in the url)</p></li></ul><hr><h3>Example :</h3><pre><code class="javascript">{
+  url: "/home",
+  options: {
+    siteName: "Z-Router"
+  },
+  template: "&lt;h1&gt; My website is called : &lt;% this.siteName %&gt; &lt;/h1&gt;",
+  callback : function(options) {
+    console.log("Hello, the website is called " + options.siteName);
+  }
+}
+
+</code></pre></div></section><section><div class="wrapper">   <h2>Z-Router methods :</h2><p> 
+ZRouter is the main "object Class", most of its methods are <a href="http://lmgtfy.com/?q=method+chaining+javascript" target="_blank">chaining capable.</a></p><ul><li> <span class="inline-code">setRoot()</span><p>Sets the default route in the router. It is used when no route provided on load or when the route asked doesn't exist. (default: "/")</p></li></ul><ul><li> <span class="inline-code">hashbang()</span><p>Sets the default prefix for the hash part. if true, routes will work with the '#!' prefix. (default: false)</p></li><li> <span class="inline-code">setLoaderTpl()</span><p>Sets what will be displayed when the router is fetching a template. It is inline html in a string. (default: "&lt;p&gt;Loading...&lt;/p&gt;")</p></li><li> <span class="inline-code">add()</span><p>Adds a route in the routes array of the router. You have to pass a valid route or it won't be registered</p></li><li> <span class="inline-code">navigate()</span><p>Changes the hash to the url passed in.</p></li><li> <span class="inline-code">check()</span><p>Forces the router to recheck the hash part of the url (usefull if you do not use the listen method)</p></li><li> <span class="inline-code">listen()</span><p>Starts the hash listener, so that when it changes, the new template will replace the current one. (better use at the end of the routes declaration)</p></li></ul></div></section><section><div class="wrapper">   <h2>Z-Router Example:</h2><p>Here is the code for a simple router:</p><pre><code class="javascript">ZRouter
+// set the root path (default "/")
+  .setRoot("/")
+  // set the loader template
+  .setLoaderTpl('&lt;h2&gt;The template is loading, be patient please!&lt;/h2&gt;')
+
+  //add a route
+  .add({
+    url : "/",
+    template: '&lt;h2&gt;The root Url&lt;/h2&gt;' +
+              '&lt;hr&gt;' +
+              '&lt;p&gt;&lt;span class="inline-code"&gt; url : "&lt;% this.url %&gt;" &lt;/span&gt;&lt;/p&gt;' +
+              '&lt;p&gt;What is the root url?&lt;/p&gt;' +
+              '&lt;ul&gt;&lt;li&gt;It will be automatically loaded if no route has been provided on page load&lt;/li&gt;' +
+              '&lt;li&gt;It will be loaded if no route matches the entered url&lt;/li&gt;&lt;/ul&gt;' +
+              '&lt;p&gt;It can be changed : &lt;span class="inline-code"&gt;ZRouter.setRoot("/newRootRoute")&lt;/span&gt;&lt;/p&gt;',
+    options: {
+      url : "/"
+    },
+    callback : function(options){
+      displayhashRoute();
+    }
+  })
+
+  //add a route
+  .add({
+    url  : "/user",
+    template : '&lt;h2&gt;A Normal route&lt;/h2&gt;' +
+                '&lt;hr&gt;' +
+                '&lt;p&gt;&lt;span class="inline-code"&gt; url : "&lt;% this.url %&gt;" &lt;/span&gt;&lt;/p&gt;' +
+                '&lt;p&gt;You could probably use this route to display a list of users...&lt;/p&gt;',
+    options:{
+      url: "/user"
+    },
+    callback : function(options){
+      displayhashRoute();
+    }
+  })
+
+  //add a route
+  .add({
+    url  : "/user/:id",
+    template : '&lt;h2&gt;A route with parameter &lt;/h2&gt;' +
+                '&lt;hr&gt;' +
+                '&lt;p&gt;&lt;span class="inline-code"&gt; url : "&lt;% this.url %&gt;" &lt;/span&gt;&lt;/p&gt;' +
+                '&lt;p&gt;&lt;span class="inline-code"&gt; parameter : id = &lt;% this.params.id %&gt; &lt;/span&gt;&lt;/p&gt;' +
+                '&lt;p&gt;You could probably use this route to display a specific user&lt;/p&gt;',
+    options: {
+      url: "/user/:id"
+    },
+      callback : function(options){
+      displayhashRoute();
+    }
+  })
+
+  //add a route
+  .add({
+    url : "/fetched",
+    templateUrl : 'partials/fetched.html',
+    options: {
+      url : "/fetched"
+    },
+    callback : function(options) {
+      displayhashRoute();
+    }
+  })
+
+  // listen for hash changes
+  .listen();
+  
+  //display the hash url inside the adressbar of the fake browser
+  function displayhashRoute (){
+    var url = window.location.hash;
+    document.querySelector('.address-bar').innerHTML = url;
+  }
+</code></pre></div></section><section><div class="wrapper"><h2>More :</h2><p>I developed this for me and wanted to share it with you because I think it can be usefull.</p><p>I don't guarantee that it is perfect but I tried to do my best.</p><p>Contributions, forks, pull requests, comments... are welcome!</p><hr><div id="disqus_thread"></div><script>/**
+* RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+* LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+
+s.src = '//labocaradeuc.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();</script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></div></section><footer><div class="wrapper"><div class="grid"><div class="grid-2"><div class="box center"><p>Made with<span data-ztooltips="LOVE" class="big">&nbsp;<span class="pink entypo-heart">&nbsp;</span></span>by<a href="http://caradeuc.info">Benjamin Caradeuc</a></p><p><a href="mailto:benjamin@caradeuc.info" data-ztooltips="benjamin@caradeuc.info" class="btn"><span class="entypo-mail">&nbsp;</span>contact me</a></p></div></div><div class="grid-2"><div class="box center"><p>Share my work !</p><a data-ztooltips="Share via facebook" href="http://www.facebook.com/sharer.php?u=http://labo.caradeuc.info/z-router/" class="social-btn facebook"><span class="entypo-facebook"></span></a><a data-ztooltips="Share via twitter" href="https://twitter.com/share?url=http://labo.caradeuc.info/z-router/&amp;via=benavern" class="social-btn twitter"><span class="entypo-twitter"></span></a></div></div></div></div></footer><script src="js/main.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script><script>hljs.initHighlightingOnLoad();</script></body></html>
